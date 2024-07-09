@@ -1,0 +1,68 @@
+{% extends 'flatpages/index.html' %}
+{% load censor %}
+
+{% block title %}
+Post List
+{% endblock title %}
+
+{% block body %}
+    <div class="container">
+        <div class="mt-5">
+            <form action="" method="get" style="display: table; text-align: left; margin: auto;">
+                {{ filterset.form.as_p }}
+                <input type="submit" value="Найти" />
+            </form>
+        </div>
+    </div>
+        <div class="container">
+            <div class="text-center mt-5">
+            {% if post_list %}
+                <h1>Новости</h1>
+                <table> <!-- Начинаем описывать таблицу -->
+                    <tr> <!-- Добавляем строку -->
+                        <td> <!-- Добавляем ячейку в строку -->
+                            <b>Заголовок</b>
+                        </td>
+                        <td> <!-- Добавляем ещё одну ячейку в строку и так далее -->
+                            <b>Текст</b>
+                        </td>
+                        <td>
+                            <b>Дата</b>
+                        </td>
+                    </tr> <!-- Не забываем закрыть HTML-тег строки -->
+
+                    {% for post in post_list %}
+                    <tr> <!-- Добавляем строку -->
+                        <td> <!-- Добавляем ячейку в строку -->
+                            <p><a href="{% url 'post_list' %}{{ post.pk }}">{{ post.title|censor_func }}</a></p>
+                        </td>
+                        <td> <!-- Добавляем ещё одну ячейку в строку и так далее -->
+                            <p>{{ post.text|censor_func|truncatechars:40 }}</p>
+                        </td>
+                        <td>
+                            <p>{{ post.creation_time|date:'d.m.Y h:m:s' }}</p>
+                        </td>
+                    </tr> <!-- Не забываем закрыть HTML-тег строки -->
+                    {% endfor %}
+                </table>
+
+            {% else %}
+                <h2>Нет новостей!</h2>
+            {% endif %}
+            <a href="{% url 'post_list' %}">Список</a> |
+            <a href="{% url 'post_create' %}">Создать</a>
+            </div>
+        </div>
+
+        <style type="text/css">
+            table {
+                text-align: left;
+                margin: auto;
+            }
+
+            td {
+                border: 1px solid black;
+                padding: 3px 5px;
+            }
+        </style>
+{% endblock body %}
