@@ -9,6 +9,7 @@ from .forms import PostForm
 
 from subscriptions.tasks import notice_of_creation  # Импорт задачи из другого приложения
 
+from django.core.cache import cache
 
 # Create your views here.
 
@@ -46,6 +47,13 @@ class PostDetail(DetailView):
     template_name = 'post.html'
     context_object_name = 'post'
     pk_url_kwarg = 'pk'
+    
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'post-{self.kwargs["pk"]}', None)
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+        return obj
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
