@@ -89,6 +89,8 @@ DEFAULT_FROM_EMAIL = 'admin@example.com'
 # Если вы используете Redis Labs, то переменные CELERY_BROKER_URL и CELERY_RESULT_BACKEND должны строиться по шаблону:
 # redis://логин:пароль@endpoint:port
 
+# info_list = [Public endpoint URL, Public endpoint PORT, Security Default user password]
+
 CELERY_BROKER_URL = f'redis://default:{info_list[2]}@{info_list[0]}:{info_list[1]}'  # Указывает на URL брокера сообщений (Redis). По умолчанию он находится на порту 6379
 CELERY_RESULT_BACKEND = f'redis://default:{info_list[2]}@{info_list[0]}:{info_list[1]}'  # Указывает на хранилище результатов выполнения задач
 CELERY_ACCEPT_CONTENT = ['application/json']  # Допустимый формат данных
