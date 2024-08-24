@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-i_-@(o-+pa)%ke32)7*5#m6ywpyn_h&b1dw!l0hzbcev#8ogv$
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Application definition
 
@@ -162,6 +162,128 @@ TEMPLATES = [
         },
     },
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    
+    # Define formatters
+    'formatters': {
+        'console_verbose': {
+            'format': '%(asctime)s %(levelname)s %(message)s',
+        },
+        'console_warning': {
+            'format': '%(asctime)s %(levelname)s [%(pathname)s] %(message)s',
+        },
+        'console_error': {
+            'format': '%(asctime)s %(levelname)s [%(pathname)s] %(message)s',
+            'exc_info': True,
+        },
+        'file_general': {
+            'format': '%(asctime)s %(levelname)s [%(module)s] %(message)s',
+        },
+        'file_error': {
+            'format': '%(asctime)s %(levelname)s [%(pathname)s] %(message)s',
+            'exc_info': True,
+        },
+        'file_security': {
+            'format': '%(asctime)s %(levelname)s [%(module)s] %(message)s',
+        },
+    },
+    
+    # Define filters
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    
+    # Define handlers
+    'handlers': {
+        'console_debug': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_verbose',
+        },
+        'console_warning': {
+            'level': 'WARNING',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_warning',
+        },
+        'console_error': {
+            'level': 'ERROR',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_error',
+        },
+        'file_general': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'logging.FileHandler',
+            'filename': 'general.log',
+            'formatter': 'file_general',
+        },
+        'file_errors': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'errors.log',
+            'formatter': 'file_error',
+        },
+        'file_security': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': 'security.log',
+            'formatter': 'file_security',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'file_error',  # Use the same format as in errors.log but without exc_info
+            'include_html': True,
+        },
+    },
+    
+    # Define loggers
+    'loggers': {
+        'django': {
+            'handlers': ['console_debug', 'console_warning', 'console_error', 'file_general'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['file_errors', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['file_errors', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.template': {
+            'handlers': ['file_errors'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['file_errors'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['file_security'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    }
+}
+
 
 WSGI_APPLICATION = 'news_portal.wsgi.application'
 
